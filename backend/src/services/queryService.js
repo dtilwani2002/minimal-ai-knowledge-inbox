@@ -14,7 +14,7 @@ async function answerQuestion(question) {
 
   if (topChunks.length === 0) {
     return {
-      answer: "I don't have any saved content to answer from yet. Add a note or URL first.",
+      answer: "I don't have any saved content relevant to that question yet. Try adding more notes or asking something else.",
       sources: [],
     };
   }
@@ -30,7 +30,7 @@ async function answerQuestion(question) {
     score: Number(c.score.toFixed(4)),
   }));
 
-  logger.info({ question, topScore: sources[0]?.score }, 'Query answered');
+  logger.info({ question, topScore: sources[0]?.score, matchCount: sources.length }, 'Query answered');
 
   return { answer, sources };
 }
