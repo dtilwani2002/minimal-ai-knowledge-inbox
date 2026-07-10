@@ -17,6 +17,8 @@ function cosineSimilarity(a, b) {
  * against the query. Fine for a few thousand chunks. See README for
  * what breaks at scale and how you'd fix it (ANN index / pgvector / etc).
  */
+const MIN_RELEVANCE = 0.35;
+
 function searchSimilarChunks(queryEmbedding, topK = config.topK) {
   const rows = db
     .prepare(
@@ -36,7 +38,10 @@ function searchSimilarChunks(queryEmbedding, topK = config.topK) {
   }));
 
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, topK);
+
+  return scored
+    .filter((chunk) => chunk.score >= MIN_RELEVANCE)
+    .slice(0, topK);
 }
 
 module.exports = { searchSimilarChunks, cosineSimilarity };
